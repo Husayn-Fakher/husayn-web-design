@@ -14,6 +14,11 @@
 	<noscript>
 		<link rel="stylesheet" href="assets/css/multi/noscript.css" />
 	</noscript>
+	<!-- Firebase SDK v8 -->
+	<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
 </head>
 
 <body class="is-preload">
@@ -93,6 +98,7 @@
 				<h2>Sintra</h2>
 				<p>Me in Sintra March 2021</p>
 			</article>
+
 		</div>
 
 		<!-- Footer -->
@@ -101,9 +107,11 @@
 				<div>
 					<section>
 						<h2>Husayn Fakher</h2>
-						<p>Hello! I'm Husayn, a Computer Engineer shaping innovation in the digital landscape. Armed with a Bachelor's in 
+						<p>Hello! I'm Husayn, a Computer Engineer shaping innovation in the digital landscape. Armed
+							with a Bachelor's in
 							Computer Engineering from the University of Wisconsin-Madison and
-							 postgraduate studies at Utah State University, my journey blends technical prowess with global exposure.</p>
+							postgraduate studies at Utah State University, my journey blends technical prowess with
+							global exposure.</p>
 					</section>
 					<section>
 						<h2>Follow me on ...</h2>
@@ -127,16 +135,17 @@
 				<div>
 					<section>
 						<h2>Get in touch</h2>
-						<form method="post" action="#">
+						<form id="contactForm">
 							<div class="fields">
 								<div class="field half">
-									<input type="text" name="name" id="name" placeholder="Name" />
+									<input type="text" name="name" id="name" placeholder="Name" required />
 								</div>
 								<div class="field half">
-									<input type="text" name="email" id="email" placeholder="Email" />
+									<input type="email" name="email" id="email" placeholder="Email" required />
 								</div>
 								<div class="field">
-									<textarea name="message" id="message" rows="4" placeholder="Message"></textarea>
+									<textarea name="message" id="message" rows="4" placeholder="Message"
+										required></textarea>
 								</div>
 							</div>
 							<ul class="actions">
@@ -144,7 +153,64 @@
 								<li><input type="reset" value="Reset" /></li>
 							</ul>
 						</form>
+						<!-- Success Message -->
+						<div id="successMessage" style="display:none; margin-top: 20px;">
+							<p>Thank you for getting in touch! We will respond soon.</p>
+						</div>
 					</section>
+					<script>
+
+
+						// Your Firebase config (replace with your actual configuration values)
+						const firebaseConfig = {
+							apiKey: "AIzaSyD6ceMxFL4vlRUpWmOX0OSq8Lpl9XK57M8",
+							authDomain: "imagegalleryapp-64e97.firebaseapp.com",
+							projectId: "imagegalleryapp-64e97",
+							storageBucket: "imagegalleryapp-64e97.firebasestorage.app",
+							messagingSenderId: "830332418167",
+							appId: "1:830332418167:web:3681b2662e212473cbee72"
+						};
+
+						// Initialize Firebase
+						firebase.initializeApp(firebaseConfig);
+
+						// Firebase services you want to use (Firestore, Storage, etc.)
+						const db = firebase.firestore();
+						const storage = firebase.storage();
+						// Handle the form submission
+						const contactForm = document.getElementById("contactForm");
+
+						contactForm.onsubmit = async (e) => {
+							e.preventDefault();
+
+							// Retrieve values from the form
+							const name = document.getElementById("name").value.trim();
+							const email = document.getElementById("email").value.trim();
+							const message = document.getElementById("message").value.trim();
+
+							if (!name || !email || !message) {
+								alert("Please fill in all fields!");
+								return;
+							}
+
+							try {
+								// Save data to Firestore under "contacts" collection
+								await db.collection("contacts images").add({
+									name: name,
+									email: email,
+									message: message,
+									sentAt: firebase.firestore.FieldValue.serverTimestamp(),
+								});
+
+								// Show success message and clear form
+								document.getElementById("successMessage").style.display = "block";
+								contactForm.reset();
+							} catch (error) {
+								console.error("Error saving message:", error);
+								alert("There was an error sending your message. Please try again later.");
+							}
+						};
+					</script>
 				</div>
 			</div>
 		</footer>

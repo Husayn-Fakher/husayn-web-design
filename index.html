@@ -14,6 +14,12 @@
 	<noscript>
 		<link rel="stylesheet" href="assets/css/noscript.css" />
 	</noscript>
+
+	 <!-- Firebase SDK v8 -->
+	 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+	 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+	 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+	 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
 </head>
 
 <body class="is-preload">
@@ -202,60 +208,124 @@
 		
 		</div>
 
-		<!-- Footer -->
-		<footer id="footer">
-			<section>
-				<form method="post" action="#">
-					<div class="fields">
-						<div class="field">
-							<label for="name">Name</label>
-							<input type="text" name="name" id="name" />
-						</div>
-						<div class="field">
-							<label for="email">Email</label>
-							<input type="text" name="email" id="email" />
-						</div>
-						<div class="field">
-							<label for="message">Message</label>
-							<textarea name="message" id="message" rows="3"></textarea>
-						</div>
-					</div>
-					<ul class="actions">
-						<li><input type="submit" value="Send Message" /></li>
-					</ul>
-				</form>
-			</section>
-			<section class="split contact">
-				<section class="alt">
-					<h3>Address</h3>
-					<p>1234 Somewhere Road #87257<br />
-						Nashville, TN 00000-0000</p>
-				</section>
-				<section>
-					<h3>Phone</h3>
-					<p><a >(000) 000-0000</a></p>
-				</section>
-				<section>
-					<h3>Email</h3>
-					<p><a >husayn.fakher@gmail.com</a></p>
-				</section>
-				<section>
-					<h3>Social</h3>
-					<ul class="icons alt">
-						<li><a href="https://www.linkedin.com/in/husaynfakher/" class="icon brands alt fa-linkedin"><span class="label">Facebook</span></a>
-						</li>
+<!-- Footer -->
+<footer id="footer">
+	<section>
+	  <form id="contactForm">
+		<div class="fields">
+		  <div class="field">
+			<label for="name">Name</label>
+			<input type="text" name="name" id="name" required />
+		  </div>
+		  <div class="field">
+			<label for="email">Email</label>
+			<input type="email" name="email" id="email" required />
+		  </div>
+		  <div class="field">
+			<label for="message">Message</label>
+			<textarea name="message" id="message" rows="3" required></textarea>
+		  </div>
+		</div>
+		<ul class="actions">
+		  <li><input type="submit" value="Send Message" /></li>
+		</ul>
+	  </form>
+	  <!-- Success Message -->
+	  <div id="successMessage" style="display:none;">
+		<p>Thank you for your message. We'll get back to you soon!</p>
+	  </div>
+	</section>
+	<section class="split contact">
+	  <section class="alt">
+		<h3>Address</h3>
+		<p>1234 Somewhere Road #87257<br />
+		  Nashville, TN 00000-0000</p>
+	  </section>
+	  <section>
+		<h3>Phone</h3>
+		<p><a >(000) 000-0000</a></p>
+	  </section>
+	  <section>
+		<h3>Email</h3>
+		<p><a>husayn.fakher@gmail.com</a></p>
+	  </section>
+	  <section>
+		<h3>Social</h3>
+		<ul class="icons alt">
+		  <li><a href="https://www.linkedin.com/in/husaynfakher/" class="icon brands alt fa-linkedin"><span class="label">LinkedIn</span></a></li>
+		  <li><a href="https://www.instagram.com/husaynfakher/" class="icon brands alt fa-instagram"><span class="label">Instagram</span></a></li>
+		  <li><a href="https://github.com/husayn-fakher" class="icon brands alt fa-github"><span class="label">GitHub</span></a></li>
+		  <li><a href="https://x.com/husayn_fakher" class="icon brands alt fa-twitter"><span class="label">Twitter</span></a></li>
+		</ul>
+	  </section>
+	</section>
+  </footer>
+  
+  <script>
 
-					
-						<li><a href="https://www.instagram.com/husaynfakher/" class="icon brands alt fa-instagram"><span class="label">Instagram</span></a>
-						</li>
-						<li><a href="https://github.com/husayn-fakher" class="icon brands alt fa-github"><span class="label">GitHub</span></a></li>
 
-						<li><a href="https://x.com/husayn_fakher" class="icon brands alt fa-twitter"><span class="label">Twitter</span></a></li>
 
-					</ul>
-				</section>
-			</section>
-		</footer>
+    // Your Firebase config (replace with your actual configuration values)
+    const firebaseConfig = {
+      apiKey: "AIzaSyD6ceMxFL4vlRUpWmOX0OSq8Lpl9XK57M8",
+      authDomain: "imagegalleryapp-64e97.firebaseapp.com",
+      projectId: "imagegalleryapp-64e97",
+      storageBucket: "imagegalleryapp-64e97.firebasestorage.app",
+      messagingSenderId: "830332418167",
+      appId: "1:830332418167:web:3681b2662e212473cbee72"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+
+    // Firebase services you want to use (Firestore, Storage, etc.)
+    const db = firebase.firestore();
+    const storage = firebase.storage();
+
+    // Check if Firebase is initialized successfully
+    firebase.auth().onAuthStateChanged(user => {
+      if (user) {
+        document.getElementById("status").innerHTML = `Welcome, ${user.email}`;
+      } else {
+        document.getElementById("status").innerHTML = "Not logged in.";
+      }
+    });
+
+	// Handle the form submission
+	const contactForm = document.getElementById("contactForm");
+  
+	contactForm.onsubmit = async (e) => {
+	  e.preventDefault();
+  
+	  // Retrieve values from the form
+	  const name = document.getElementById("name").value.trim();
+	  const email = document.getElementById("email").value.trim();
+	  const message = document.getElementById("message").value.trim();
+  
+	  if (!name || !email || !message) {
+		alert("Please fill in all fields!");
+		return;
+	  }
+  
+	  try {
+		// Save data to Firestore under "contacts" collection
+		await db.collection("contacts").add({
+		  name: name,
+		  email: email,
+		  message: message,
+		  sentAt: firebase.firestore.FieldValue.serverTimestamp(),
+		});
+  
+		// Show success message and clear form
+		document.getElementById("successMessage").style.display = "block";
+		contactForm.reset();
+	  } catch (error) {
+		console.error("Error saving message:", error);
+		alert("There was an error sending your message. Please try again later.");
+	  }
+	};
+  </script>
+  
 
 		<!-- Copyright -->
 		<div id="copyright">
