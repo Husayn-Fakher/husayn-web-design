@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contacts</title>
+  <link href="assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+  <style>
+    .contact {
+      border: 1px solid #ccc;
+      margin-bottom: 15px;
+      padding: 15px;
+      border-radius: 5px;
+    }
+    .contact p {
+      margin: 5px 0;
+    }
+  </style>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>Contact Data</h1>
+    <div id="contactsContainer"></div>
+  </div>
+
+  <script>
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyCcGJtTmStsZ5IZnYe2sHBTyxiW_9tIdyk",
+      authDomain: "imagegalleryapp-64e97.firebaseapp.com",
+      projectId: "imagegalleryapp-64e97",
+      storageBucket: "imagegalleryapp-64e97.appspot.com",
+      messagingSenderId: "830332418167",
+      appId: "1:830332418167:web:3681b2662e212473cbee72"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const firestore = firebase.firestore();
+
+    // Function to display contact data
+    function displayContactData(data) {
+      const container = document.getElementById("contactsContainer");
+
+      const contactElement = document.createElement("div");
+      contactElement.classList.add("contact");
+
+      contactElement.innerHTML = `
+        <p><strong>Name:</strong> ${data.name}</p>
+        <p><strong>Email:</strong> ${data.email}</p>
+        <p><strong>Message:</strong> ${data.message}</p>
+        <p><strong>Sent At:</strong> ${data.sentAt?.toDate().toLocaleString()}</p>
+      `;
+
+      container.appendChild(contactElement);
+    }
+
+    // Fetching data from Firestore and displaying
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        const contactsRef = firestore.collection("contacts"); // Adjust your collection name
+        contactsRef.get().then((querySnapshot) => {
+          querySnapshot.forEach((doc) => {
+            const contactData = doc.data();
+            displayContactData(contactData);
+          });
+        });
+      } else {
+        // Redirect to login page if not authenticated
+        window.location.href = 'login-2.html';
+      }
+    });
+  </script>
+</body>
+</html>

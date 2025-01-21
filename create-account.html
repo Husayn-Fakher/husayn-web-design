@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create Account</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="assets/css/login/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="assets/css/login/bootstrap-theme.min.css" rel="stylesheet" type="text/css">
+    <link href="assets/css/login/templatemo_style.css" rel="stylesheet" type="text/css">
+
+
+
+
+	<!-- Firebase SDK v8 -->
+	<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
+
+</head>
+<body class="templatemo-bg-gray">
+    <h1 class="margin-bottom-15">Create Account</h1>
+    <div class="container">
+        <div class="col-md-12">
+            <form id="signupForm"  class="form-horizontal templatemo-create-account templatemo-container" role="form" action="#" method="post">
+                <div class="form-inner">
+                    <!-- Email Field -->
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            <label for="email" class="control-label">Email</label>
+                            <input type="email" class="form-control" id="email" placeholder="Enter your email" required>
+                        </div>
+                    </div>
+                    <!-- Password Field -->
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            <label for="password" class="control-label">Password</label>
+                            <input type="password" class="form-control" id="password" placeholder="Enter your password" required>
+                        </div>
+                    </div>
+                    <!--  Confirm Password Field -->
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            <label for="password_confirm" class="control-label">Confirm Password</label>
+                            <input type="password" class="form-control" id="password_confirm" placeholder="Confirm your password" required>
+                        </div>
+                    </div>
+                    <!-- Submit Button -->
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            <input type="submit" value="Create Account" class="btn btn-info">
+                            <a href="login-2.html" class="pull-right">Login</a>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script type="text/javascript" src="assets/js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="assets/js/bootstrap.min.js"></script>
+
+
+	<script>
+  	// Your Firebase config (replace with your actual configuration values)
+	  const firebaseConfig = {
+			apiKey: "AIzaSyCcGJtTmStsZ5IZnYe2sHBTyxiW_9tIdyk",
+			authDomain: "imagegalleryapp-64e97.firebaseapp.com",
+			projectId: "imagegalleryapp-64e97",
+			storageBucket: "imagegalleryapp-64e97.firebasestorage.app",
+			messagingSenderId: "830332418167",
+			appId: "1:830332418167:web:3681b2662e212473cbee72"
+		};
+
+        // Initialize Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+
+        // Signup Functionality
+        document.getElementById("signupForm").onsubmit = async (e) => {
+            e.preventDefault();
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+            const confirmPassword = document.getElementById("password_confirm").value;
+
+            // Check if passwords match
+            if (password !== confirmPassword) {
+                alert("Passwords do not match. Please try again.");
+                return;
+            }
+
+            try {
+                // Create a new user with email and password
+                await auth.createUserWithEmailAndPassword(email, password);
+                alert("Signup successful!");
+                // Redirect to login page after successful signup
+                window.location.href = "login-2.html";
+            } catch (error) {
+                console.error("Signup Error:", error.message);
+                alert("Error signing up: " + error.message);
+            }
+        };
+    </script>
+</body>
+</html>
