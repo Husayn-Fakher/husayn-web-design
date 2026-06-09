@@ -264,79 +264,80 @@
 	</section>
   </footer>
   
+
   <script>
+  // Firebase config 
+  const firebaseConfig = {
+    apiKey: "AIzaSyD6ceMxFL4vlRUpWmOX0OSq8Lpl9XK57M8", 
+    authDomain: "imagegalleryapp-64e97.firebaseapp.com",
+    projectId: "imagegalleryapp-64e97",
+    storageBucket: "imagegalleryapp-64e97.firebasestorage.app",
+    messagingSenderId: "830332418167",
+    appId: "1:830332418167:web:3681b2662e212473cbee72"
+  };
 
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
 
+  // Firebase services you want to use (Firestore, Storage, etc.)
+  const db = firebase.firestore();
+  const storage = firebase.storage();
 
-    //  Firebase config 
-    const firebaseConfig = {
-      apiKey: "AIzaSyD6ceMxFL4vlRUpWmOX0OSq8Lpl9XK57M8",
-      authDomain: "imagegalleryapp-64e97.firebaseapp.com",
-      projectId: "imagegalleryapp-64e97",
-      storageBucket: "imagegalleryapp-64e97.firebasestorage.app",
-      messagingSenderId: "830332418167",
-      appId: "1:830332418167:web:3681b2662e212473cbee72"
-    };
-
-    // Initialize Firebase
-    firebase.initializeApp(firebaseConfig);
-
-    // Firebase services you want to use (Firestore, Storage, etc.)
-    const db = firebase.firestore();
-    const storage = firebase.storage();
-
-    // Check if Firebase is initialized successfully
-    firebase.auth().onAuthStateChanged(user => {
+  // Check if Firebase is initialized successfully
+  firebase.auth().onAuthStateChanged(user => {
+    const statusElement = document.getElementById("status");
+    if (statusElement) {
       if (user) {
-        document.getElementById("status").innerHTML = `Welcome, ${user.email}`;
+        statusElement.innerHTML = `Welcome, ${user.email}`;
       } else {
-        document.getElementById("status").innerHTML = "Not logged in.";
+        statusElement.innerHTML = "Not logged in.";
       }
-    });
-
-	// Handle the form submission
-	const contactForm = document.getElementById("contactForm");
-  
-	contactForm.onsubmit = async (e) => {
-	  e.preventDefault();
-  
-	  // Retrieve values from the form
-	  const name = document.getElementById("name").value.trim();
-	  const email = document.getElementById("email").value.trim();
-	  const message = document.getElementById("message").value.trim();
-  
-	  if (!name || !email || !message) {
-		alert("Please fill in all fields!");
-		return;
-	  }
-  
-	  try {
-		// Save data to Firestore under "contacts" collection
-		await db.collection("contacts").add({
-		  name: name,
-		  email: email,
-		  message: message,
-		  sentAt: firebase.firestore.FieldValue.serverTimestamp(),
-		});
-  
-
- // Show success message and clear form
-    const successElement = document.getElementById("successMessage");
-    if (successElement) {
-      successElement.style.display = "block";
-    } else {
-      console.warn("Success message element not found in the DOM.");
     }
+  });
 
-    contactForm.reset(); 
+  // Handle the form submission
+  const contactForm = document.getElementById("contactForm");
 
-  } catch (error) {
-    console.error("Error saving message:", error);
-    // This alert will now tell you WHY it failed (e.g., Permission Denied)
-    alert("Error: " + error.message);
+  if (contactForm) {
+    contactForm.onsubmit = async (e) => {
+      e.preventDefault();
+
+      // Retrieve values from the form
+      const name = document.getElementById("name").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const message = document.getElementById("message").value.trim();
+
+      if (!name || !email || !message) {
+        alert("Please fill in all fields!");
+        return;
+      }
+
+      try {
+        // Save data to Firestore under "contacts" collection
+        await db.collection("contacts").add({
+          name: name,
+          email: email,
+          message: message,
+          sentAt: firebase.firestore.FieldValue.serverTimestamp(),
+        });
+
+        // Show success message and clear form
+        const successElement = document.getElementById("successMessage");
+        if (successElement) {
+          successElement.style.display = "block";
+        } else {
+          console.warn("Success message element not found in the DOM.");
+        }
+
+        contactForm.reset(); 
+
+      } catch (error) {
+        console.error("Error saving message:", error);
+        alert("Error: " + error.message);
+      }
+    }; // <-- Added this closure to cleanly finish the onsubmit function!
   }
-  </script>
-  
+</script>
 
 		<!-- Copyright -->
 		<div id="copyright">
