@@ -319,31 +319,22 @@
 		  sentAt: firebase.firestore.FieldValue.serverTimestamp(),
 		});
   
-		// Show success message and clear form
-		  <!--  
-		document.getElementById("successMessage").style.display = "block";
-		contactForm.reset();
-	  } catch (error) {
-		console.error("Error saving message:", error);
-		alert("There was an error sending your message. Please try again later.");
-	  }
-	};-->
 
-	  // Show success message and clear form
-const successElement = document.getElementById("successMessage");
-if (successElement) {
-    successElement.style.display = "block";
-} else {
-    console.warn("Success message element not found in the DOM.");
-}
+ // Show success message and clear form
+    const successElement = document.getElementById("successMessage");
+    if (successElement) {
+      successElement.style.display = "block";
+    } else {
+      console.warn("Success message element not found in the DOM.");
+    }
 
-contactForm.reset();
+    contactForm.reset(); 
 
-} catch (error) {
+  } catch (error) {
     console.error("Error saving message:", error);
     // This alert will now tell you WHY it failed (e.g., Permission Denied)
     alert("Error: " + error.message);
-}
+  }
   </script>
   
 
